@@ -31,6 +31,7 @@
 -->
 <template>
     <div class="zrender">
+        <button class="saveImgBtn" v-if="saveImg" @click="getCanvasImg">保存为图片</button>
         <div id="zrender-canvas"></div>
     </div>
 </template>
@@ -80,6 +81,12 @@
             }
         },
         props: {
+            saveImg: {
+                type: Boolean,
+                default() {
+                    return true
+                }
+            },
             mapLength: {
                 type: [String, Number],
                 default() {
@@ -189,7 +196,12 @@
             },
             drawChart() {
                 let that = this;
-                this.zr = zrender.init(document.getElementById('zrender-canvas'));
+                this.zr = zrender.init(document.getElementById('zrender-canvas'), {
+                    renderer: 'canvas',
+                    devicePixelRatio: '2',
+                    width: 'auto',
+                    height: 'auto'
+                });
                 this.group = new zrender.Group();
                 this.group.draggable = this.draggable; // 是否开启拖拽
                 this.group.progressive = 2; // 是否渐进加载（用于加载元素较多时）
@@ -197,6 +209,7 @@
                 this.drawBack();
 
                 this.zr.add(this.group);
+                this.zr.id = 'canvas1';
                 window.onresize = function () {
                     if (that.zr !== 'null') {
                         that.zr.resize({
@@ -639,7 +652,7 @@
                         stroke: 'transparent', // 描边颜色，
                         lineWidth: 0, // 线宽，
                     },
-                    zlevel: -1
+                    z: -1
                 });
                 this.group.add(rect);
             },
@@ -685,6 +698,18 @@
                 });
                 this.group.add(this.tipsText);
             },
+            getCanvasImg() {
+                let canvas = document.querySelector("#zrender-canvas canvas");
+                if (canvas) {
+                    let strDataURI = canvas.toDataURL("image/jpeg");
+                    let a = document.createElement("a");
+                    a.download = 'canvasImg';　　//下载的文件名，
+                    a.href =strDataURI;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                }
+            }
         }
     }
 </script>
@@ -692,10 +717,17 @@
 <style>
     #zrender-canvas {
         height: 700px;
+        padding: 20px;
     }
-    .tips {
-        position: fixed;
-        opacity: 0;
-        height: 80px;
+    .saveImgBtn {
+        position: absolute;
+        top: 0;
+        right: 15px;
+        padding: 5px;
+        border: 1px solid #14b8d4;
+        background-color: #fff;
+        color: #14b8d4;
+        border-radius: 4px;
+        cursor: pointer;
     }
 </style>
