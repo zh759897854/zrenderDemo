@@ -32,7 +32,7 @@
 <template>
     <div class="zrender">
         <button class="saveImgBtn" v-if="saveImg" @click="getCanvasImg">保存为图片</button>
-        <div id="zrender-canvas"></div>
+        <div ref="canvasBox" id="zrender-canvas"></div>
     </div>
 </template>
 
@@ -65,8 +65,8 @@
                 },
                 dataObj: {
                     r: 5,
-                    x: 200,
-                    y: 300,
+                    x: 20,
+                    y: 0,
                     width: 200, // 矩形宽
                     height: 60, // 矩形高
                     typeRectWidth: 150, // 公司类型矩形宽
@@ -77,7 +77,10 @@
                 rectArray: [],
                 countBreak: 0,
                 tip: null,
-                tipsText: null
+                tipsText: null,
+                maxHeight: 0,
+                minHeight: 0,
+                maxWidth: 0,
             }
         },
         props: {
@@ -196,15 +199,17 @@
             },
             drawChart() {
                 let that = this;
-                this.zr = zrender.init(document.getElementById('zrender-canvas'), {
-                    renderer: 'canvas',
-                    devicePixelRatio: '2',
-                    width: 'auto',
-                    height: 'auto'
-                });
+                this.zr = zrender.init(document.getElementById('zrender-canvas')
+                    // ,{
+                    // renderer: 'canvas',
+                    // devicePixelRatio: '2',
+                    // width: 'auto',
+                    // height: 'auto'
+                    // }
+                );
                 this.group = new zrender.Group();
                 this.group.draggable = this.draggable; // 是否开启拖拽
-                this.group.progressive = 2; // 是否渐进加载（用于加载元素较多时）
+                this.group.progressive = -1; // 是否渐进加载（用于加载元素较多时）
                 this.group.silent = false; // 是否相应鼠标事件 文档是反的  false响应  true不响应
                 this.drawBack();
 
@@ -227,11 +232,35 @@
             updateChart() {
                 let that = this;
                 that.rectArray = [];
+                let maxYHeight = [],
+                    maxXWidth = [];
                 this.group.eachChild(function(data) {
                     if (data.name && data.name.indexOf('rect') > -1) {
+                        maxYHeight.push(data.shape.y);
+                        maxXWidth.push(data.shape.x);
                         that.rectArray.push(data)
                     }
                 });
+                this.maxHeight = 0;
+                this.minHeight = 0;
+                this.maxWidth = 0;
+                this.maxHeight = (maxYHeight.sort(function(a, b) {
+                    return b - a
+                }))[0];
+
+                this.minHeight = (maxYHeight.sort(function(a, b) {
+                    return a - b
+                }))[0];
+
+                this.maxWidth = (maxXWidth.sort(function(a, b) {
+                    return b - a
+                }))[0];
+
+                let canvasBox = this.$refs.canvasBox;
+                let styleObj = 'height:' + (parseFloat(Math.abs(this.maxHeight)) + parseFloat(Math.abs(this.minHeight)) + 300) + 'px; width:' +  (this.maxWidth + 300) + 'px';
+                canvasBox.setAttribute('style', styleObj);
+
+                this.group.attr('position', [0, parseFloat(Math.abs(this.minHeight))+20]);
 
                 let levelObj = {},
                     len = that.rectArray;
@@ -643,12 +672,12 @@
                     shape: {
                         r: 0,
                         x: 0,
-                        y: -10000,
-                        width: 5000,
-                        height: 20000
+                        y: parseFloat(this.minHeight) - 200,
+                        width: this.zr.getWidth(),
+                        height: this.zr.getHeight() + parseFloat(Math.abs(this.minHeight))
                     },
                     style: {
-                        fill: 'transparent', // 填充颜色，默认#000
+                        fill: '#fff', // 填充颜色，默认#000
                         stroke: 'transparent', // 描边颜色，
                         lineWidth: 0, // 线宽，
                     },
@@ -715,9 +744,8 @@
 </script>
 
 <style>
-    #zrender-canvas {
-        height: 700px;
-        padding: 20px;
+    .zrender {
+        height: 500px;
     }
     .saveImgBtn {
         position: absolute;
