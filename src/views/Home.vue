@@ -2222,11 +2222,11 @@
             }
         },
         components: {
-            zRender
+            zRender,
         },
         methods: {
             rectClick(data) {
-                console.log(data, '-=-=-=-')
+                console.log(data)
             }
         }
     }

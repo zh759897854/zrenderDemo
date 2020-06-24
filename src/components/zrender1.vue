@@ -256,10 +256,11 @@
                     return b - a
                 }))[0];
 
+                // 根据绘制内容 设置画布高度  主要是为了能保存完整图片 因为保存图片只保存画布大小的部分
                 let canvasBox = this.$refs.canvasBox;
-                let styleObj = 'height:' + (parseFloat(Math.abs(this.maxHeight)) + parseFloat(Math.abs(this.minHeight)) + 300) + 'px; width:' +  (this.maxWidth + 300) + 'px';
+                let styleObj = 'height:' + (parseFloat(Math.abs(this.maxHeight)) + parseFloat(Math.abs(this.minHeight)) + 300) + 'px; width:' +  (parseFloat(this.maxWidth) + 300) + 'px';
                 canvasBox.setAttribute('style', styleObj);
-
+                // 根据画布高度调整内容的高度
                 this.group.attr('position', [0, parseFloat(Math.abs(this.minHeight))+20]);
 
                 let levelObj = {},
