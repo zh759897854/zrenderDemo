@@ -1,4 +1,5 @@
 ```
+    开发环境：Vue
     props:  dataList <Object> 绘图数据
             draggable <Boolean> 图谱是否可拖拽
             initData <Object> 位置相关参数  默认设置
