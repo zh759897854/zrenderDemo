@@ -658,12 +658,7 @@
                         lineWidth: 2
                     },
                     onclick: function() {
-                        // that.group.eachChild(function (item) {
-                        //     that.zr.remove(item)
-                        // })
-                        // that.maxLength = that.maxLength + that.mapLength;
-                        // console.log(that.maxLength)
-                        // that.drawChart();
+                        
                     }
                 });
                 this.group.add(Circle);
