@@ -677,7 +677,7 @@
                         stroke: 'transparent', // 描边颜色，
                         lineWidth: 0, // 线宽，
                     },
-                    z: -1
+                    z: 0
                 });
                 this.group.add(rect);
             },
