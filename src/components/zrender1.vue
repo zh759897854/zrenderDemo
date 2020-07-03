@@ -732,7 +732,7 @@
                     a.href =strDataURI;
                     document.body.appendChild(a);
                     a.click();
-                    a.remove();
+                    a.remove(); 
                 }
             }
         }
