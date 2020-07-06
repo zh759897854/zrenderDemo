@@ -29,4 +29,5 @@
                 whiteColor: '#fff',
                 baseColor: '#14b8d4',
                 textFont: 14,
+   缺点 计算时间长
 ```
