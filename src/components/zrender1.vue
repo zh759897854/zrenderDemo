@@ -117,7 +117,7 @@
             initStyle: { // 样式相关设置
                 type: Object,
                 default() {
-                    return {};
+                    return {}; 
                 }
             }
         },
